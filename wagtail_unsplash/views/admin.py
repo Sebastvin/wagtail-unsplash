@@ -22,11 +22,14 @@ def search_unsplash_images(request):
         image = add_unsplash_image_to_wagtail(request.POST["image_id"])
         return redirect(reverse("wagtailimages:edit", args=(image.id,)))
 
+    print("*" * 100)
+    print(request.POST)
+
     query_string = None
-    if 'q' in request.GET:
+    if "q" in request.GET:
         form = SearchForm(request.GET, placeholder=_("Search Unsplash"))
         if form.is_valid():
-            query_string = form.cleaned_data['q']
+            query_string = form.cleaned_data["q"]
     else:
         form = SearchForm(placeholder=_("Search Unsplash"))
 
@@ -38,12 +41,12 @@ def search_unsplash_images(request):
         response = api.search.photos(query=query_string, page=page, per_page=per_page)
 
     context = {
-        'search_form': form,
-        'results': None,
+        "search_form": form,
+        "results": None,
     }
-    
+
     if response:
-        total_pages = response['total_pages']
+        total_pages = response["total_pages"]
         next_page = None
         if page != total_pages:
             next_page = page + 1
@@ -51,16 +54,16 @@ def search_unsplash_images(request):
         if page != 0:
             previous_page = page - 1
 
-        contexxt.update(
-            current_page=total_pages,
+        context.update(
+            current_page_number=total_pages,
             current_page=page,
-            total_results=response['total'],
-            results=response['results'],
+            total_results=response["total"],
+            results=response["results"],
             next_page=next_page,
             previous_page=previous_page,
         )
 
-    return TemplateResponse(request, 'wagtail_unsplash/search.html', context)
+    return TemplateResponse(request, "wagtail_unsplash/search.html", context)
 
 
 def add_unsplash_image_to_wagtail(image_id):
@@ -69,7 +72,7 @@ def add_unsplash_image_to_wagtail(image_id):
     url = photo.urls.raw
     unsplash_image = urllib.request.urlretrieve(url)
 
-    with open(unsplash_image[0], 'rb') as fp:
+    with open(unsplash_image[0], "rb") as fp:
         image_obj = Image.objects.create(
             title=f"Unsplash image ({photo.id})",
             file=File(fp),

@@ -5,8 +5,10 @@
 
 {% block content %}
     {% trans "Unsplash Images" as im_str %}
-    {% include "wagtailadmin/shared/header.html" with title=im_str icon="image" search_url="search_unsplash_images" %}
-    
+
+
+    {% include "wagtail_unsplash/header.html" with title=im_str icon="image" search_url='search_unsplash_images' %}
+
     <div class="nice-padding">
         {% if results %}
             <form id="unsplash-image-select-form" action="" method="POST">
